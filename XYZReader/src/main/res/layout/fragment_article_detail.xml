@@ -1,43 +1,76 @@
-<com.example.xyzreader.ui.DrawInsetsFrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/draw_insets_frame_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
 
-    <com.example.xyzreader.ui.ObservableScrollView
-        android:id="@+id/scrollview"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <FrameLayout
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            app:layout_scrollFlags="scroll|snap"
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginStart="48dp"
+            app:expandedTitleMarginEnd="64dp">
 
-            <FrameLayout
-                android:id="@+id/photo_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/photo_placeholder">
-                <!--suppress AndroidLintContentDescription -->
-                <ImageView
-                    android:scaleType="centerCrop"
-                    android:id="@+id/photo"
+
+                <FrameLayout
+                    app:layout_scrollFlags="scroll|snap"
+                    android:id="@+id/photo_container"
                     android:layout_width="match_parent"
-                    android:layout_height="304dp"
-                     />
+                    android:layout_height="wrap_content"
+                    android:background="@color/photo_placeholder">
 
-                <View
+                    <ImageView
+                        android:scaleType="centerCrop"
+                        android:id="@+id/photo"
+                        android:layout_width="match_parent"
+                        android:layout_height="304dp"
+                        />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="304dp"
+                        android:background="@drawable/photo_background_protection" />
+
+                </FrameLayout>
+
+                <android.support.v7.widget.Toolbar
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:layout_scrollFlags="snap"
+                    android:id="@+id/toolbar_detail"
                     android:layout_width="match_parent"
-                    android:layout_height="304dp"
-                    android:background="@drawable/photo_background_protection" />
+                    android:layout_height="wrap_content"/>
 
-            </FrameLayout>
 
-            <include layout="@layout/content_article_detail"/>
+        </android.support.design.widget.CollapsingToolbarLayout>
 
-        </FrameLayout>
 
-    </com.example.xyzreader.ui.ObservableScrollView>
+
+    </android.support.design.widget.AppBarLayout>
+
+
+        <include
+            android:id="@+id/include"
+            layout="@layout/content_article_detail"
+            app:layout_anchor="@+id/meta_bar"
+            app:layout_anchorGravity="left|top" />
+
+
+
+
+
+
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/share_fab"
@@ -52,4 +85,4 @@
         android:elevation="@dimen/fab_elevation"
         android:contentDescription="@string/action_share" />
 
-</com.example.xyzreader.ui.DrawInsetsFrameLayout>
+</android.support.design.widget.CoordinatorLayout>
