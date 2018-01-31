@@ -65,12 +65,6 @@
             app:layout_anchorGravity="left|top" />
 
 
-
-
-
-
-
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/share_fab"
         android:stateListAnimator="@animator/fab_state_list_anim"
