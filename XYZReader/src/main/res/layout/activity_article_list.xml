@@ -7,7 +7,7 @@
 
 
     <android.support.design.widget.AppBarLayout
-        android:elevation="4dp"
+        android:elevation="@dimen/appBarElevation"
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
@@ -51,11 +51,7 @@
     </android.support.design.widget.AppBarLayout>
 
 
-
     <include layout="@layout/content_article_list"/>
-
-
-
 
 
 </android.support.design.widget.CoordinatorLayout>
