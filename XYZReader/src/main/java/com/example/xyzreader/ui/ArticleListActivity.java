@@ -69,7 +69,6 @@ public class ArticleListActivity extends AppCompatActivity implements
                 }
             });
             snackbar.show();
-
     }
 
 
