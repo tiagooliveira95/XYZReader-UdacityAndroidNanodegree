@@ -1,32 +1,25 @@
 package com.example.xyzreader.ui;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.LoaderManager;
-import android.app.SharedElementCallback;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
-import android.os.Build;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityOptionsCompat;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
-import android.transition.Explode;
-import android.transition.Transition;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.example.xyzreader.R;
@@ -34,12 +27,13 @@ import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 
+
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,7 +45,7 @@ import butterknife.ButterKnife;
  * activity presents a grid of items as cards.
  */
 public class ArticleListActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = ArticleListActivity.class.toString();
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -59,25 +53,32 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
-    private SimpleDateFormat outputFormat = new SimpleDateFormat();
+    private DateFormat outputFormat = SimpleDateFormat.getDateTimeInstance();
     // Most time functions can only handle 1902 - 2037
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
 
 
 
+    private void showSnackBar(){
+            mSwipeRefreshLayout.setRefreshing(false);
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.article_container_layout), R.string.internet_unavailable,Snackbar.LENGTH_LONG);
+            snackbar.setAction(R.string.try_again, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(isNetworkAvailable()) refresh();
+                }
+            });
+            snackbar.show();
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Transition explode = new Explode();
-            explode.setDuration(1000);
-            getWindow().setExitTransition(explode);
-            getWindow().setEnterTransition(explode);
-        }*/
         setContentView(R.layout.activity_article_list);
-
         mSwipeRefreshLayout =  findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mRecyclerView =  findViewById(R.id.recycler_view);
         getLoaderManager().initLoader(0, null, this);
@@ -85,9 +86,9 @@ public class ArticleListActivity extends AppCompatActivity implements
         if (savedInstanceState == null) {
             refresh();
         }
+
+        if(!isNetworkAvailable()) showSnackBar();
     }
-
-
 
 
     private void refresh() {
@@ -142,6 +143,15 @@ public class ArticleListActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mRecyclerView.setAdapter(null);
+    }
+
+    @Override
+    public void onRefresh() {
+        if(!isNetworkAvailable()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            showSnackBar();
+        }else
+            refresh();
     }
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
@@ -229,5 +239,11 @@ public class ArticleListActivity extends AppCompatActivity implements
             super(view);
             ButterKnife.bind(this,view);
         }
+    }
+
+    public boolean isNetworkAvailable() {
+        final ConnectivityManager connectivityManager = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
+        assert connectivityManager != null;
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 }

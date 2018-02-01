@@ -8,6 +8,6 @@
     <string name="action_share">Share</string>
 
     <string name="up">Up</string>
-    <string name="photo_transition_name">photo</string>
-
+    <string name="internet_unavailable">Intenet is unavailable</string>
+    <string name="try_again">Try Again</string>
 </resources>
